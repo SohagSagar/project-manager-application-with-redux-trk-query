@@ -1,14 +1,15 @@
 import React from 'react';
-import Navbar from './Navbar';
-import Team from './Team';
+import BacklogList from '../ProjectsLIst/BacklogList';
 
-const Teams = () => {
+const Backlog = () => {
     return (
-        <div className="flex flex-col w-screen h-screen overflow-auto text-gray-700 bg-gradient-to-tr from-blue-200 via-indigo-200 to-pink-200">
-            <Navbar />
-
-            <div className="px-10 mt-6 flex justify-between">
-                <h1 className="text-2xl font-bold">Teams</h1>
+        <div className="flex flex-col flex-shrink-0 w-72">
+            <div className="flex items-center flex-shrink-0 h-10 px-2">
+                <span className="block text-sm font-semibold">Backlog</span>
+                <span
+                    className="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30"
+                >6</span
+                >
                 <button
                     className="flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100"
                 >
@@ -28,10 +29,8 @@ const Teams = () => {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 px-10 mt-4 gap-6 overflow-auto" >
-
-                <Team/>
-
+            <div className="flex flex-col pb-2 overflow-auto">
+                <BacklogList/>
 
 
             </div>
@@ -39,4 +38,4 @@ const Teams = () => {
     );
 };
 
-export default Teams;
+export default Backlog;
