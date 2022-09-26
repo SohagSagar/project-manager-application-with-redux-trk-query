@@ -1,15 +1,21 @@
-import {  useState } from "react";
-import { Link } from "react-router-dom";
+import {  useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../assets/logo.png";
+import { useLoginMutation } from "../features/auth/authApi";
+import toast from 'react-hot-toast';
+import Error from "../utils/Error";
+import { useSelector } from "react-redux";
 
 
 
 export default function Login() {
-
+    const [login,{isLoading,isError,error,isSuccess}] =useLoginMutation()
+    const {accessToken,user}=useSelector(state=>state?.auth) || {};
+    const navigate=useNavigate()
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState();
+
 
     const handleLogin = (e) =>{
         e.preventDefault()
@@ -17,8 +23,18 @@ export default function Login() {
             email,
             password
         }
-       
+        login(loginData)
     }
+
+    useEffect(()=>{
+        if(isSuccess){
+            if(accessToken && user){
+                toast.success('Login Successfull');
+                navigate('/teams')
+            }
+            
+        }
+    },[isSuccess])
 
 
 
@@ -93,7 +109,7 @@ export default function Login() {
 
                         <div>
                             <button
-                               
+                               disabled={isLoading}
                                 type="submit"
                                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
                             >
@@ -101,9 +117,9 @@ export default function Login() {
                             </button>
                         </div>
 
-                        {/* {
-                            error && <Error message={error} />
-                        } */}
+                        {
+                            isError && <Error message={error?.data} />
+                        }
                     </form>
                 </div>
             </div>

@@ -1,10 +1,20 @@
 import React from 'react';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useMatch } from 'react-router-dom';
 import logo from '../assets/logo.png'
+import {  userLoggedOut } from '../features/auth/authSlice';
 
 const Navbar = () => {
     const projectsPath = useMatch('/projects')
     const teamsPath = useMatch('/teams');
+    const { user } = useSelector(state => state.auth);
+    const dispatch = useDispatch()
+    const handleLogout = () =>{
+        dispatch(userLoggedOut());
+        localStorage.clear();
+        toast.success('Logout Successfull')
+    }
 
     return (
         <div className="flex items-center flex-shrink-0 w-full h-16 px-10 bg-white bg-opacity-75" >
@@ -38,12 +48,18 @@ const Navbar = () => {
             </div>
 
 
-            <buton className="flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full  " >
+            <buton className="   w-8 h-8 ml-auto overflow-hidden rounded-full  " >
             </buton>
+            
+            {
+                user && <div className='mr-2 font-semibold'>{user.name.slice()[0].toUpperCase()+user.name.slice(1)}</div>
+            }
+            
 
             <div className="dropdown dropdown-hover dropdown-end">
                 {/* <label tabIndex={0} className="btn m-1">Hover</label> */}
                 <div className='flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full cursor-pointer'>
+
                     <img src="https://assets.codepen.io/5041378/internal/avatars/users/default.png?fit=crop&format=auto&height=512&version=1600304177&width=512" alt="" />
                 </div>
 
@@ -59,7 +75,7 @@ const Navbar = () => {
                         to={'/teams'}
                     >Teams</Link></li>
 
-                    <li className='mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700 cursor-pointer text-left btn btn-ghost btn-sm normal-case rounded-md'> Logout</li>
+                    <li onClick={handleLogout} className='mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700 cursor-pointer text-left btn btn-ghost btn-sm normal-case rounded-md'> Logout</li>
                 </ul>
             </div>
 

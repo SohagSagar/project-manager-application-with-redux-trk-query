@@ -1,17 +1,22 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Error from '../utils/Error'
+import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../assets/logo.png";
+import { useRegisterMutation } from "../features/auth/authApi";
+import {toast} from 'react-hot-toast';
+import { useSelector } from "react-redux";
 
 export default function Register() {
 
-
+    const [register, { isLoading, isSuccess, error: registerError }] = useRegisterMutation()
+    const {accessToken,user}=useSelector(state=>state.auth) || {};
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isAggreed, setIsAggreed] = useState(false);
     const [error, setError] = useState()
-
+    const navigate =useNavigate()
 
     const handleRegister = (e) => {
         e.preventDefault();
@@ -21,15 +26,31 @@ export default function Register() {
 
         if (password !== confirmPassword) {
             setError('Password do not match!')
-        } else {
+        } 
+        else if (registerError) {
+            setError(registerError)
+        }
+        else {
             const registeredData = {
                 name,
                 email,
                 password,
             }
-            
+
+            register(registeredData)
+
         }
+
     }
+    useEffect(() => {
+        if (isSuccess) {
+            if (accessToken && user) {
+                toast.success('Register Successfull');
+                navigate('/teams')
+            }
+
+        }
+    }, [isSuccess,accessToken,user,navigate])
 
 
 
@@ -152,7 +173,7 @@ export default function Register() {
 
                         <div>
                             <button
-                                
+                                disabled={isLoading}
                                 type="submit"
                                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
                             >
@@ -161,9 +182,9 @@ export default function Register() {
                             </button>
                         </div>
 
-                        {/* {
+                        {
                             error && <Error message={error} />
-                        } */}
+                        }
                     </form>
                 </div>
             </div>
