@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
-import AddMemberModal from './Modals/AddMemberModal';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { useDeleteTeamMutation } from '../features/team/teamApi';
 
-const Team = ({ team, openModal,control: addModalControl }) => {
-    const { teamName, teamColor, descriptions, createOn } = team;
-    const [opened, setOpened] = useState(false);
-    const controlModal = () => {
-        setOpened((prevState) => !prevState);
-    };
+
+const Team = ({ team,  openAddModal,openViewModal }) => {
+    const { id,teamName, teamColor, descriptions, createOn } = team;
+    const {user}=useSelector(state=>state.auth);
+    const [deleteTeam,{isLoading,isSuccess,isError}] =useDeleteTeamMutation()
+
+    const handleDelete = () =>{
+        deleteTeam({
+            id,
+            email:user.email
+        })
+    }
+    useEffect(()=>{
+        if(isSuccess){
+            toast.success("Delete Successfull")
+        }
+    },[isSuccess])
 
     return (
         <div>
@@ -19,11 +32,11 @@ const Team = ({ team, openModal,control: addModalControl }) => {
                     </svg>
 
                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded w-40 font-">
-                        <li className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>View Members</li>
+                        <li onClick={()=>openViewModal(true,id)} className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>View Members</li>
 
-                        <li onClick={() => openModal(true)} className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>Add Member</li>
+                        <li onClick={() => openAddModal(true,id)} className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>Add Member</li>
 
-                        <li className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>Delete Team</li>
+                        <li onClick={handleDelete} className=' btn-sm mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700'>Delete Team</li>
 
 
 

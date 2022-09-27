@@ -6,6 +6,7 @@ import Error from '../../utils/Error'
 
 const CreateTeamModal = ({ opened, control }) => {
     const { user: loggedInUser } = useSelector(state => state.auth);
+    const { email } = loggedInUser;
     const [createTeam, { isLoading, isError, error, isSuccess }] = useCreateTeamMutation()
 
     const date = new Date();
@@ -24,25 +25,27 @@ const CreateTeamModal = ({ opened, control }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const teamData = {
+        const data = {
             teamName:teamName.toUpperCase(),
             teamColor,
             descriptions,
             stage,
             createdBy,
             createOn,
-            teamMembers: [{id:5,name:"sohag",email:"sohag@gmail.com"}]
+            teamMembers: [loggedInUser]
         }
-        createTeam(teamData)
+        createTeam({data,email})
+        control()
+        toast.success('Team Created Successfully!');
     }
 
     useEffect(()=>{
-        if(isSuccess){
+        if(!isLoading && isSuccess){
             toast.success('Team Created Successfully!');
-            control()
+            control();
 
         }
-    },[isSuccess,control])
+    },[isSuccess,control,isLoading])
 
 
     return (

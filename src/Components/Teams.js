@@ -5,18 +5,58 @@ import Error from '../utils/Error';
 import TeamCardLoader from '../utils/TeamCardLoader';
 import AddMemberModal from './Modals/AddMemberModal';
 import CreateTeamModal from './Modals/CreateTeamModal';
+import ViewMemberModal from './Modals/ViewMemberModal';
 import Navbar from './Navbar';
 import Team from './Team';
 
 const Teams = () => {
     const [opened, setOpened] = useState(false);
     const [addMemberModalOpened, setAddMemberModalOpened] = useState(false);
+    const [viewMemberModalOpened, setViewMemberModalOpened] = useState(false);
+    const [card_id,setCard_id]=useState('');
+
+
+
+    // controller for add modal
+    const openAddModal = (openModal,cardId) =>{
+        setAddMemberModalOpened(openModal);
+        setCard_id(cardId)
+    }
+    const closeAddModal = () =>{
+        setAddMemberModalOpened((prevState) => !prevState);
+    }
+
+
+
+    // controller for view members modal
+    const openViewModal = (openModal,cardId) =>{
+        setViewMemberModalOpened(openModal);
+        setCard_id(cardId)
+    }
+
+    const closeViewModal = () =>{
+        setViewMemberModalOpened((prevState) => !prevState);
+    }
+
+
+
+
+    const trigerModalViewMember = (openModal,cardId) =>{
+        setViewMemberModalOpened(openModal);
+        setCard_id(cardId)
+
+    }
     const controlModal = () => {
         setOpened((prevState) => !prevState);
     };
     const controlAddMemberModal = () => {
         setAddMemberModalOpened((prevState) => !prevState);
     };
+
+    const viewModalControl = (openModal,cardId) =>{
+        setViewMemberModalOpened((prevState) => !prevState)
+    }
+
     
 
     const handleCreateTeamModal = ()=>{
@@ -32,7 +72,7 @@ const Teams = () => {
     if(!isLoading && isError) content = <Error message={error}/>
     if(!isLoading && !isError && teams?.length===0) content = <Error message="No team found"/>
     if(!isLoading && !isError && teams?.length>0) content = teams.map(team=><Team 
-    key={team.id} team={team} openModal={setAddMemberModalOpened} />)
+    key={team.id} team={team} openAddModal={openAddModal} openViewModal={openViewModal}/>)
 
     
     return (
@@ -70,7 +110,10 @@ const Teams = () => {
 
             }
             {
-                addMemberModalOpened && <AddMemberModal addModalControl={controlAddMemberModal}/>
+                addMemberModalOpened && <AddMemberModal closeAddModal={closeAddModal} id={card_id}/>
+            }
+            {
+                viewMemberModalOpened && <ViewMemberModal closeViewModal={closeViewModal} id={card_id}/>
             }
         </div>
     );
